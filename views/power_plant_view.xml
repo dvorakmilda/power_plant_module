@@ -1,0 +1,38 @@
+<odoo>
+    <!-- Tree view -->
+    <record id="view_power_plant_tree" model="ir.ui.view">
+        <field name="name">power.plant.data.tree</field>
+        <field name="model">power.plant.data</field>
+        <field name="arch" type="xml">
+            <tree string="Power Plant Data">
+                <field name="generator_id"/>
+                <field name="generator1"/>
+                <field name="generator2"/>
+                <field name="timestamp"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Graph view -->
+    <record id="view_power_plant_graph" model="ir.ui.view">
+        <field name="name">power.plant.data.graph</field>
+        <field name="model">power.plant.data</field>
+        <field name="arch" type="xml">
+            <graph string="Power Plant Data">
+                <field name="timestamp" type="row"/>
+                <field name="generator1" type="measure"/>
+                <field name="generator2" type="measure"/>
+                <field name="generator_id" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action to open tree and graph views -->
+    <record id="action_power_plant_data" model="ir.actions.act_window">
+        <field name="name">Power Plant Data</field>
+        <field name="res_model">power.plant.data</field>
+        <field name="view_mode">tree,graph</field>
+    </record>
+
+
+</odoo>
