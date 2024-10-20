@@ -6,7 +6,8 @@ from datetime import datetime
 class PowerPlantAPI(http.Controller):
     @http.route('/api/power_plant_data', type='json', auth='public', methods=['POST'], csrf=False)
     def receive_data(self, **post):
-        data = request.jsonrequest  # Očekává formát {"1": [1024, 750]}
+        # Opraveno: správný způsob, jak načíst JSON požadavek
+        data = request.httprequest.get_json()  # Použití get_json() pro čtení těla JSON požadavku
         current_time = datetime.now()
 
         for generator_id, values in data.items():

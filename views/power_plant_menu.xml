@@ -1,4 +1,5 @@
 <odoo>
     <menuitem id="menu_power_plant_root" name="Power Plant" sequence="10"/>
     <menuitem id="menu_power_plant_data" name="Power Plant Data" parent="menu_power_plant_root" action="action_power_plant_data"/>
+    <menuitem id="menu_power_plant_aggregated" name="Aggregated Power Data" parent="menu_power_plant_root" action="action_power_plant_aggregated_data"/>
 </odoo>

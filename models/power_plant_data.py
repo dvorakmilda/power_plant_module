@@ -11,36 +11,47 @@ class PowerPlantData(models.Model):
     timestamp = fields.Datetime(string="Timestamp", default=fields.Datetime.now)
     is_real_data = fields.Boolean(string="Is Real Data", default=True)  # True for real data, False for calculated
 
-    @api.model
-    def check_missing_records(self):
-        # Získání času předchozí minuty
-        current_time = datetime.now()
-        one_minute_ago = current_time - timedelta(minutes=1)
 
-        # Získání záznamů vytvořených za poslední minutu
-        records_last_minute = self.search([('timestamp', '>=', one_minute_ago), ('timestamp', '<', current_time)])
+    # Computed fields for averages
+    avg_generator1 = fields.Float(string='Avg Generator 1 Power', compute='_compute_avg_generator1')
+    avg_generator2 = fields.Float(string='Avg Generator 2 Power', compute='_compute_avg_generator2')
+
+    @api.depends('generator1')
+    def _compute_avg_generator1(self):
+        for record in self:
+            record.avg_generator1 = record.generator1  # This should reflect your custom logic for avg
+
+    @api.depends('generator2')
+    def _compute_avg_generator2(self):
+        for record in self:
+            record.avg_generator2 = record.generator2  # This should reflect your custom logic for avg
+
+    @api.model
+    def aggregate_hourly_data(self):
+        current_time = datetime.now()
+        one_hour_ago = current_time - timedelta(hours=1)
 
         # Najít všechny generátory
         generator_ids = self.search([]).mapped('generator_id')
 
         for generator_id in generator_ids:
-            # Získat počet záznamů pro daný generátor za poslední minutu
-            records_for_generator = records_last_minute.filtered(lambda r: r.generator_id == generator_id)
-            count = len(records_for_generator)
+            # Získání dat za poslední hodinu
+            records = self.search([
+                ('generator_id', '=', generator_id),
+                ('timestamp', '>=', one_hour_ago),
+                ('timestamp', '<=', current_time),
+                ('is_real_data', '=', True)
+            ])
 
-            # Pokud počet záznamů není 60, je potřeba je doplnit
-            if count < 60:
-                # Získat poslední známé hodnoty pro tento generátor
-                last_record = self.search([('generator_id', '=', generator_id)], order='timestamp desc', limit=1)
+            if records:
+                avg_generator1 = sum(record.generator1 for record in records) / len(records)
+                avg_generator2 = sum(record.generator2 for record in records) / len(records)
 
-                if last_record:
-                    # Vytvoření chybějících záznamů na základě posledního známého záznamu
-                    for i in range(60 - count):
-                        missing_time = one_minute_ago + timedelta(seconds=i)  # Vytvoření přesného času
-                        self.create({
-                            'generator_id': generator_id,
-                            'generator1': last_record.generator1,
-                            'generator2': last_record.generator2,
-                            'timestamp': missing_time,  # Nastavit dopočítaný čas
-                            'is_real_data': False  # Označit jako počítaná data
-                        })
+                # Uložení agregovaných dat do nové tabulky
+                self.env['power.plant.aggregated.data'].create({
+                    'generator_id': generator_id,
+                    'avg_generator1': avg_generator1,
+                    'avg_generator2': avg_generator2,
+                    'period_type': 'hour',
+                    'timestamp': current_time,
+                })

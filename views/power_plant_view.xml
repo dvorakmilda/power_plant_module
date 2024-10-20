@@ -6,9 +6,10 @@
         <field name="arch" type="xml">
             <tree string="Power Plant Data">
                 <field name="generator_id"/>
-                <field name="generator1"/>
-                <field name="generator2"/>
+                <field name="generator1" avg="avg"/> <!-- Zobrazování průměru v souhrnu -->
+                <field name="generator2" avg="avg"/> <!-- Zobrazování průměru v souhrnu -->
                 <field name="timestamp"/>
+                <field name="is_real_data"/>
             </tree>
         </field>
     </record>
@@ -18,12 +19,47 @@
         <field name="name">power.plant.data.graph</field>
         <field name="model">power.plant.data</field>
         <field name="arch" type="xml">
-            <graph string="Power Plant Data">
+            <graph string="Power Plant Data" type="bar">
                 <field name="timestamp" type="row"/>
-                <field name="generator1" type="measure"/>
-                <field name="generator2" type="measure"/>
-                <field name="generator_id" type="col"/>
+                <field name="generator1" type="measure" operator="avg"/> <!-- Použití průměru pro hodnoty -->
+                <field name="generator2" type="measure" operator="avg"/> <!-- Použití průměru pro hodnoty -->
+                <field name="generator_id" type="col"/> <!-- Data rozdělená podle ID generátoru -->
             </graph>
+        </field>
+    </record>
+
+    <!-- Pivot view for non-aggregated Power Plant Data with explicit averages -->
+    <record id="view_power_plant_pivot" model="ir.ui.view">
+        <field name="name">power.plant.data.pivot</field>
+        <field name="model">power.plant.data</field>
+        <field name="arch" type="xml">
+            <pivot string="Power Plant Data">
+                <!-- Grouping by timestamp to allow pivot by time -->
+                <field name="timestamp" type="row" interval="hour"/> <!-- Group by hour -->
+                <field name="timestamp" type="row" interval="day"/> <!-- Group by day -->
+                <field name="timestamp" type="row" interval="week"/> <!-- Group by week -->
+                <field name="timestamp" type="row" interval="month"/> <!-- Group by month -->
+
+                <!-- Use the computed average fields -->
+                <field name="avg_generator1" type="measure" operator="avg" string="Avg Generator 1 Power"/>
+                <field name="avg_generator2" type="measure" operator="avg" string="Avg Generator 2 Power"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search view with custom filter for the last hour -->
+    <record id="view_power_plant_search" model="ir.ui.view">
+        <field name="name">power.plant.data.search</field>
+        <field name="model">power.plant.data</field>
+        <field name="arch" type="xml">
+            <search string="Search Power Plant Data">
+                <field name="generator_id"/>
+                <field name="timestamp"/>
+                <filter string="Poslední hodina" name="last_hour"
+                    domain="[('timestamp', '>=', (context_today() - datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S'))]"
+                />
+                <!-- Můžete přidat další filtry, pokud jsou potřeba -->
+            </search>
         </field>
     </record>
 
@@ -31,8 +67,6 @@
     <record id="action_power_plant_data" model="ir.actions.act_window">
         <field name="name">Power Plant Data</field>
         <field name="res_model">power.plant.data</field>
-        <field name="view_mode">tree,graph</field>
+        <field name="view_mode">tree,graph,pivot</field>
     </record>
-
-
 </odoo>

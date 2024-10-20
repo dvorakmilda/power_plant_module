@@ -7,8 +7,9 @@
     'author': 'Your Name',
     'depends': ['base', 'web'],
     'data': [
-        'views/power_plant_menu.xml',
         'views/power_plant_view.xml',
+        'views/power_plant_aggregated_view.xml',
+        'views/power_plant_menu.xml',
         'security/ir.model.access.csv',
         'data/ir_cron_data.xml',
     ],

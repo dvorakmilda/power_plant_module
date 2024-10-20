@@ -1,14 +1,14 @@
 <odoo>
     <data noupdate="1">
-        <record id="ir_cron_check_missing_records" model="ir.cron">
-            <field name="name">Check Missing Power Plant Records</field>
+        <record id="ir_cron_aggregate_hourly_data" model="ir.cron">
+            <field name="name">Aggregate Hourly Power Plant Data</field>
             <field name="model_id" ref="model_power_plant_data"/>
             <field name="state">code</field>
-            <field name="code">model.check_missing_records()</field>
-            <field name="active">True</field>
-            <field name="interval_type">minutes</field>
+            <field name="code">model.aggregate_hourly_data()</field>
+            <field name="interval_type">hours</field>
             <field name="interval_number">1</field>
             <field name="numbercall">-1</field>
         </record>
     </data>
 </odoo>
+
