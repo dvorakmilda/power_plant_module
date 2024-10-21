@@ -5,9 +5,8 @@
         <field name="model">power.plant.aggregated.data</field>
         <field name="arch" type="xml">
             <tree string="Aggregated Power Plant Data">
-                <field name="generator_id"/>
-                <field name="avg_generator1"/>
-                <field name="avg_generator2"/>
+                <field name="generator_name"/>  <!-- Změněno na generator_name -->
+                <field name="avg_value"/>  <!-- Změněno na avg_value -->
                 <field name="period_type"/>
                 <field name="timestamp"/>
             </tree>
@@ -26,14 +25,11 @@
                 <field name="timestamp" type="row" interval="week"/> <!-- Týdny -->
                 <field name="timestamp" type="row" interval="month"/> <!-- Měsíce -->
 
-                <!-- Měřené hodnoty -->
-                <field name="avg_generator1" type="measure" operator="avg" string="Avg Generator 1 Power"/>
-                <field name="avg_generator2" type="measure" operator="avg" string="Avg Generator 2 Power"/>
+                <!-- Měřená hodnota -->
+                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Změněno na avg_value -->
             </pivot>
         </field>
     </record>
-
-
 
     <!-- Graph view for aggregated data -->
     <record id="view_power_plant_aggregated_graph" model="ir.ui.view">
@@ -42,19 +38,16 @@
         <field name="arch" type="xml">
             <graph string="Aggregated Power Plant Data" type="line">
                 <field name="timestamp" interval="hour" type="row"/>
-                <field name="avg_generator1" type="measure"/>
-                <field name="avg_generator2" type="measure"/>
-                <field name="generator_id" type="col"/>
+                <field name="avg_value" type="measure"/> <!-- Změněno na avg_value -->
+                <field name="generator_name" type="col"/> <!-- Změněno na generator_name -->
             </graph>
         </field>
     </record>
 
-<!-- Action to open tree and graph views -->
+    <!-- Action to open tree, graph, and pivot views -->
     <record id="action_power_plant_aggregated_data" model="ir.actions.act_window">
-        <field name="name">Power Plant Aggregater Data</field>
+        <field name="name">Power Plant Aggregated Data</field>
         <field name="res_model">power.plant.aggregated.data</field>
         <field name="view_mode">tree,graph,pivot</field>
     </record>
-
-
 </odoo>

@@ -14,7 +14,7 @@ headers = {
 # Funkce pro generování náhodných dat
 def generate_data():
     return {
-        "1": [random.randint(150, 1000), random.randint(150, 1000)]
+        "1": [random.randint(150, 1000), random.randint(150, 1000)]  # Data pro generátor ID 1
     }
 
 # Smyčka pro odesílání POST požadavků každou vteřinu

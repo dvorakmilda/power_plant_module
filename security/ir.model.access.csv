@@ -1,5 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_power_plant_data_user,power.plant.data.user,model_power_plant_data,,1,0,0,0
 access_power_plant_data_manager,power.plant.data.manager,model_power_plant_data,,1,1,1,1
-access_power_plant_aggregated_data_user,power.plant.aggregated.data.user,model_power_plant_aggregated_data,,1,0,0,0
-access_power_plant_aggregated_data_manager,power.plant.aggregated.data.manager,model_power_plant_aggregated_data,,1,1,1,1

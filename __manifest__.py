@@ -7,6 +7,7 @@
     'author': 'Your Name',
     'depends': ['base', 'web'],
     'data': [
+        'report/power_plant_report_templates.xml',
         'views/power_plant_view.xml',
         'views/power_plant_aggregated_view.xml',
         'views/power_plant_menu.xml',
