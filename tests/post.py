@@ -4,8 +4,9 @@ import random
 import time
 
 # URL vašeho REST API
-url = "http://localhost:8070/api/power_plant_data"
-
+url= "http://localhost:8070/api/power_plant_data"
+#url = "https://www.multireality.cz/api/power_plant_data"
+#url = "https://posttestserver.dev/p/ixm03e9bosab4lch/post"
 # Hlavičky HTTP požadavku
 headers = {
     "Content-Type": "application/json"
@@ -14,7 +15,7 @@ headers = {
 # Funkce pro generování náhodných dat
 def generate_data():
     return {
-        "1": [random.randint(150, 1000), random.randint(150, 1000)]  # Data pro generátor ID 1
+        "1": random.randint(150, 1000), "2": random.randint(150, 1000)  # Data pro generátor ID 1
     }
 
 # Smyčka pro odesílání POST požadavků každou vteřinu
