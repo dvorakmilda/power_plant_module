@@ -12,7 +12,7 @@ class PowerPlantAPI(http.Controller):
         # Iterace přes každý generátor a jeho hodnotu
         for generator_id, value in data.items():
             request.env['power.plant.data'].sudo().create({
-                'generator_name': f'generator{generator_id}',  # Vytváříme dynamický název generátoru
+                'name': f'generator{generator_id}',  # Vytváříme dynamický název generátoru
                 'value': value,  # Uložíme hodnotu výkonu
                 'timestamp': current_time,
                 'is_real_data': True  # Označení jako skutečná data

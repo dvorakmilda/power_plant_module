@@ -25,7 +25,7 @@
                     <tbody>
                         <t t-foreach="docs.get_grouped_avg_data()" t-as="record">
                             <tr>
-                                <td t-esc="record.generator_name"/>
+                                <td t-esc="record.name"/>
                                 <td t-esc="record.avg_value"/> <!-- Zobrazení průměrné hodnoty -->
                                 <td t-esc="record.timestamp"/>
                             </tr>

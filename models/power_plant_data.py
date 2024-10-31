@@ -5,7 +5,8 @@ class PowerPlantData(models.Model):
     _name = 'power.plant.data'
     _description = 'Power Plant Data'
 
-    generator_name = fields.Char(string="Generator Name")  # Nové pole pro název generátoru
+    id = fields.Integer(index=True)
+    name = fields.Char(string="Generator Name")  # Nové pole pro název generátoru
     value = fields.Float(string="Power (kW)")  # Jednotná hodnota pro každý záznam
     timestamp = fields.Datetime(string="Timestamp", default=fields.Datetime.now)
     is_real_data = fields.Boolean(string="Is Real Data", default=True)  # True pro reálná data, False pro vypočítaná
@@ -18,18 +19,33 @@ class PowerPlantData(models.Model):
         for record in self:
             record.avg_value = record.value  # Můžete sem přidat vlastní logiku pro průměr
 
+    def get_current_datetime(self):
+        return fields.Datetime.now()
+
+    def _get_action_view(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Power Plant Data',
+            'res_model': 'power.plant.data',
+            'view_mode': 'tree,form',
+            'context': {
+                'current_datetime': fields.Datetime.now(),  # Přidání aktuálního data a času do kontextu
+            }
+        }
+
+
     @api.model
     def aggregate_hourly_data(self):
         current_time = datetime.now()
         one_hour_ago = current_time - timedelta(hours=1)
 
         # Najít všechny názvy generátorů
-        generator_names = self.search([]).mapped('generator_name')
+        names = self.search([]).mapped('name')
 
-        for generator_name in generator_names:
+        for name in names:
             # Získání dat za poslední hodinu
             records = self.search([
-                ('generator_name', '=', generator_name),
+                ('name', '=', name),
                 ('timestamp', '>=', one_hour_ago),
                 ('timestamp', '<=', current_time),
                 ('is_real_data', '=', True)
@@ -40,7 +56,7 @@ class PowerPlantData(models.Model):
 
                 # Uložení agregovaných dat do nové tabulky
                 self.env['power.plant.aggregated.data'].create({
-                    'generator_name': generator_name,
+                    'name': name,
                     'avg_value': avg_value,
                     'period_type': 'hour',
                     'timestamp': current_time,
@@ -50,13 +66,13 @@ class PowerPlantData(models.Model):
         """ Vrátí data seskupená podle názvu generátoru a časového razítka s průměrnou hodnotou """
         query = """
             SELECT
-                generator_name,
+                name,
                 AVG(value) as avg_value,
                 date_trunc('hour', timestamp) as timestamp
             FROM
                 power_plant_data
             GROUP BY
-                generator_name, date_trunc('hour', timestamp)
+                name, date_trunc('hour', timestamp)
             ORDER BY
                 timestamp DESC
         """
@@ -85,3 +101,54 @@ class PowerPlantData(models.Model):
                     line['avg_value'] = total_avg_value / count if count > 0 else 0.0
 
         return res
+
+
+    @api.model
+    def aggregate_historical_data(self):
+        # Získání aktuálního času
+        current_time = datetime.now()
+
+        # Najít všechny názvy generátorů
+        names = self.search([]).mapped('name')
+
+        for name in names:
+            # Počáteční čas záznamů (od nejstaršího záznamu)
+            first_record = self.search([('name', '=', name)], order='timestamp asc', limit=1)
+            if not first_record:
+                continue
+
+            start_time = first_record.timestamp.replace(minute=0, second=0, microsecond=0)
+
+            # Iterace přes každou hodinu v minulosti až do současného času
+            while start_time + timedelta(hours=1) <= current_time:
+                end_time = start_time + timedelta(hours=1)
+
+                # Výběr záznamů v aktuální hodinovém intervalu
+                records = self.search([
+                    ('name', '=', name),
+                    ('timestamp', '>=', start_time),
+                    ('timestamp', '<', end_time),
+                    ('is_real_data', '=', True)
+                ])
+
+                if records:
+                    avg_value = sum(record.value for record in records) / len(records)
+
+                    # Uložení agregovaných dat do nové tabulky
+                    self.env['power.plant.aggregated.data'].create({
+                        'name': name,
+                        'avg_value': avg_value,
+                        'timestamp': start_time,
+                    })
+
+                    # Odstranění původních záznamů z této hodiny
+                    records.unlink()
+
+                # Posun na další hodinový interval
+                start_time = end_time
+
+    @api.model
+    def action_aggregate_historical_data(self):
+        # Zde zavolejte metodu pro agregaci dat
+        self.aggregate_historical_data()
+
