@@ -18,15 +18,11 @@
         <field name="model">power.plant.aggregated.data</field>
         <field name="arch" type="xml">
             <pivot string="Aggregated Power Plant Data">
-                <!-- Seskupování podle různých časových intervalů -->
-                <field name="timestamp" type="row" interval="hour"/> <!-- Hodiny -->
-                <field name="timestamp" type="row" interval="day"/> <!-- Dny -->
-                <field name="timestamp" type="row" interval="week"/> <!-- Týdny -->
-                <field name="timestamp" type="row" interval="month"/> <!-- Měsíce -->
-
-                <!-- Měřená hodnota -->
-                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Změněno na avg_value -->
-            </pivot>
+               <!-- Grouping by timestamp to allow pivot by time -->
+                <field name="timestamp" type="row" interval="hour"/> <!-- Group by hour -->
+                <field name="name" type="col"/>
+                <!-- Use the computed average field for values -->
+                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/>            </pivot>
         </field>
     </record>
 
@@ -35,10 +31,9 @@
         <field name="name">power.plant.aggregated.data.graph</field>
         <field name="model">power.plant.aggregated.data</field>
         <field name="arch" type="xml">
-            <graph string="Aggregated Power Plant Data" type="line">
-                <field name="timestamp" interval="hour" type="row"/>
-                <field name="avg_value" type="measure"/> <!-- Změněno na avg_value -->
-                <field name="name" type="col"/> <!-- Změněno na name -->
+            <graph string="Aggregated Power Plant Data" type="bar">
+                <field name="name" type="col"/> <!-- Data rozdělena podle názvu generátoru -->
+                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Změněno na zobrazení průměrné hodnoty -->
             </graph>
         </field>
     </record>
@@ -49,4 +44,47 @@
         <field name="res_model">power.plant.aggregated.data</field>
         <field name="view_mode">tree,graph,pivot</field>
     </record>
+
+
+    <!-- Search view with custom filter for the last hour -->
+    <record id="power_plant_aggregated_data_search" model="ir.ui.view">
+        <field name="name">power.plant.aggregated.data.search</field>
+        <field name="model">power.plant.aggregated.data</field>
+        <field name="arch" type="xml">
+            <search string="Search Power Plant Aggregated Data">
+                <field name="name"/>
+                <field name="timestamp"/>
+                <filter string="Poslední hodina" name="last_hour"
+                    domain="[('timestamp', '>=', (datetime.datetime.now() + relativedelta(hours=-1)))]"/>
+
+                <filter string="Poslední den" name="last_day"
+                    domain="[('timestamp', '>=', (context_today() + relativedelta(hours=-24)).strftime('%Y-%m-%d'))]"/>
+
+                <filter string="Poslední týden" name="last_week"
+                    domain="[('timestamp', '>=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d'))]"/>
+
+                <filter string="Poslední měsíc" name="last_month"
+                    domain="[('timestamp', '>=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d'))]"/>
+
+                <separator/>
+
+                <!-- Filtr pro Generator 1 -->
+                <filter string="Generator 1" name="generator1"
+                    domain="[('name', '=', 'generator1')]"/>
+
+                <!-- Filtr pro Generator 2 -->
+                <filter string="Generator 2" name="generator2"
+                    domain="[('name', '=', 'generator2')]"/>
+
+                <!-- Group by name (seskupení podle názvu generátoru) -->
+                <group expand="0" string="Group By">
+                    <filter string="Generátor" name="group_by_generator"
+                        context="{'group_by': 'name'}"/>
+                    <filter string="Den, měsíc,rok" name="group_by_day"
+                        context="{'group_by': 'timestamp:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
 </odoo>
