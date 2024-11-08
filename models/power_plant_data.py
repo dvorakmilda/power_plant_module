@@ -40,11 +40,11 @@ class PowerPlantData(models.Model):
         one_hour_ago = current_time - timedelta(hours=1)
 
         # Najít všechny názvy generátorů
-        names = self.search([]).mapped('name')
+        names = self.env['power.plant.data'].search([]).mapped('name')
 
         for name in names:
-            # Získání dat za poslední hodinu
-            records = self.search([
+            # Získání dat za poslední hodinu z tabulky power.plant.data
+            records = self.env['power.plant.data'].search([
                 ('name', '=', name),
                 ('timestamp', '>=', one_hour_ago),
                 ('timestamp', '<=', current_time),
@@ -54,7 +54,16 @@ class PowerPlantData(models.Model):
             if records:
                 avg_value = sum(record.value for record in records) / len(records)
 
-                # Uložení agregovaných dat do nové tabulky
+                # Odstranění starých agregovaných dat pro tento generátor a časové období
+                old_aggregated_records = self.env['power.plant.aggregated.data'].search([
+                    ('name', '=', name),
+                    ('timestamp', '>=', one_hour_ago),
+                    ('timestamp', '<=', current_time),
+                    ('period_type', '=', 'hour')
+                ])
+                old_aggregated_records.unlink()
+
+                # Uložení nových agregovaných dat do tabulky
                 self.env['power.plant.aggregated.data'].create({
                     'name': name,
                     'avg_value': avg_value,

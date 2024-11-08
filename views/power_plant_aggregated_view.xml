@@ -32,9 +32,10 @@
         <field name="model">power.plant.aggregated.data</field>
         <field name="arch" type="xml">
             <graph string="Aggregated Power Plant Data" type="bar">
-                <field name="name" type="col"/> <!-- Data rozdělena podle názvu generátoru -->
-                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Změněno na zobrazení průměrné hodnoty -->
-            </graph>
+            <field name="timestamp" type="row" interval="day" string="Time"/> <!-- Rozlišení podle času -->
+            <field name="name" type="col" string="Generator"/> <!-- Název generátoru pro odlišení -->
+            <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Průměrná hodnota na ose x -->
+           </graph>
         </field>
     </record>
 
