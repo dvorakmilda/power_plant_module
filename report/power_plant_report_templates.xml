@@ -1,0 +1,38 @@
+<odoo>
+    <!-- Definice reportu -->
+    <report
+        id="power_plant_module_custom_report"
+        model="power.plant.data"
+        string="Power Plant Custom Report"
+        report_type="qweb-pdf"
+        name="power_plant_data.report_custom"
+        file="power_plant_data.report_custom"
+        print_report_name="'Power Plant Report - %s' % (object.display_name)"
+    />
+    <!-- Definice šablony pro report -->
+    <template id="report_custom">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2>Power Plant Report</h2>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Generator Name</th>
+                            <th>Avg Power (kW)</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs.get_grouped_avg_data()" t-as="record">
+                            <tr>
+                                <td t-esc="record.name"/>
+                                <td t-esc="record.avg_value"/> <!-- Zobrazení průměrné hodnoty -->
+                                <td t-esc="record.timestamp"/>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

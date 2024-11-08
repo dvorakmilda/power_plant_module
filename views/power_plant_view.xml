@@ -1,13 +1,21 @@
 <odoo>
-    <!-- Tree view -->
+    <record id="action_power_plant_custom_report" model="ir.actions.report">
+        <field name="name">Power Plant Report</field>
+        <field name="model">power.plant.data</field>
+        <field name="report_name">power_plant_module.report_custom</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="print_report_name">'Power Plant Report - %s' % (object.display_name)</field>
+    </record>
+
+    <!-- Tree view (zobrazení hodnoty a průměru) -->
     <record id="view_power_plant_tree" model="ir.ui.view">
         <field name="name">power.plant.data.tree</field>
         <field name="model">power.plant.data</field>
         <field name="arch" type="xml">
             <tree string="Power Plant Data">
-                <field name="generator_id"/>
-                <field name="generator1" avg="avg"/> <!-- Zobrazování průměru v souhrnu -->
-                <field name="generator2" avg="avg"/> <!-- Zobrazování průměru v souhrnu -->
+                <field name="name"/>
+                <field name="value" string="Power"/> <!-- Zajištění průměrné hodnoty při group by i v sumárním řádku -->
+                <field name="avg_value" avg="avg" string="Avg Power"/>
                 <field name="timestamp"/>
                 <field name="is_real_data"/>
             </tree>
@@ -20,10 +28,8 @@
         <field name="model">power.plant.data</field>
         <field name="arch" type="xml">
             <graph string="Power Plant Data" type="bar">
-                <field name="timestamp" type="row"/>
-                <field name="generator1" type="measure" operator="avg"/> <!-- Použití průměru pro hodnoty -->
-                <field name="generator2" type="measure" operator="avg"/> <!-- Použití průměru pro hodnoty -->
-                <field name="generator_id" type="col"/> <!-- Data rozdělená podle ID generátoru -->
+                <field name="name" type="col"/> <!-- Data rozdělena podle názvu generátoru -->
+                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Změněno na zobrazení průměrné hodnoty -->
             </graph>
         </field>
     </record>
@@ -36,13 +42,9 @@
             <pivot string="Power Plant Data">
                 <!-- Grouping by timestamp to allow pivot by time -->
                 <field name="timestamp" type="row" interval="hour"/> <!-- Group by hour -->
-                <field name="timestamp" type="row" interval="day"/> <!-- Group by day -->
-                <field name="timestamp" type="row" interval="week"/> <!-- Group by week -->
-                <field name="timestamp" type="row" interval="month"/> <!-- Group by month -->
-
-                <!-- Use the computed average fields -->
-                <field name="avg_generator1" type="measure" operator="avg" string="Avg Generator 1 Power"/>
-                <field name="avg_generator2" type="measure" operator="avg" string="Avg Generator 2 Power"/>
+                <field name="name" type="col"/>
+                <!-- Use the computed average field for values -->
+                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/>
             </pivot>
         </field>
     </record>
@@ -53,12 +55,37 @@
         <field name="model">power.plant.data</field>
         <field name="arch" type="xml">
             <search string="Search Power Plant Data">
-                <field name="generator_id"/>
+                <field name="name"/>
                 <field name="timestamp"/>
                 <filter string="Poslední hodina" name="last_hour"
-                    domain="[('timestamp', '>=', (context_today() - datetime.timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S'))]"
-                />
-                <!-- Můžete přidat další filtry, pokud jsou potřeba -->
+                    domain="[('timestamp', '>=', (datetime.datetime.now() + relativedelta(hours=-1)))]"/>
+
+                <filter string="Poslední den" name="last_day"
+                    domain="[('timestamp', '>=', (context_today() + relativedelta(hours=-24)).strftime('%Y-%m-%d'))]"/>
+
+                <filter string="Poslední týden" name="last_week"
+                    domain="[('timestamp', '>=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d'))]"/>
+
+                <filter string="Poslední měsíc" name="last_month"
+                    domain="[('timestamp', '>=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d'))]"/>
+
+                <separator/>
+
+                <!-- Filtr pro Generator 1 -->
+                <filter string="Generator 1" name="generator1"
+                    domain="[('name', '=', 'generator1')]"/>
+
+                <!-- Filtr pro Generator 2 -->
+                <filter string="Generator 2" name="generator2"
+                    domain="[('name', '=', 'generator2')]"/>
+
+                <!-- Group by name (seskupení podle názvu generátoru) -->
+                <group expand="0" string="Group By">
+                    <filter string="Generátor" name="group_by_generator"
+                        context="{'group_by': 'name'}"/>
+                    <filter string="Den, měsíc,rok" name="group_by_day"
+                        context="{'group_by': 'timestamp:day'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -68,5 +95,15 @@
         <field name="name">Power Plant Data</field>
         <field name="res_model">power.plant.data</field>
         <field name="view_mode">tree,graph,pivot</field>
+        <field name="context">{}</field>
+        <field name="domain">[]</field>
     </record>
+
+    <record id="action_aggregate_historical_data" model="ir.actions.server">
+        <field name="name">Spustit Agregaci Dat</field>
+        <field name="model_id" ref="model_power_plant_data"/>
+        <field name="state">code</field>
+        <field name="code">model.action_aggregate_historical_data()</field>
+    </record>
+
 </odoo>
