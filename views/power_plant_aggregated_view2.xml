@@ -1,58 +1,75 @@
 <odoo>
     <!-- Tree view for aggregated data -->
-    <record id="view_power_plant_aggregated_tree" model="ir.ui.view">
-        <field name="name">power.plant.aggregated.data.tree</field>
-        <field name="model">power.plant.aggregated.data</field>
+    <record id="view_power_plant_aggregated2_tree" model="ir.ui.view">
+        <field name="name">power.plant.aggregated.data2.tree</field>
+        <field name="model">power.plant.aggregated.data2</field>
         <field name="arch" type="xml">
-            <tree string="Aggregated Power Plant Data">
+            <tree string="Aggregated Power Plant Data2">
                 <field name="name"/>  <!-- Změněno na name -->
-                <field name="avg_value"/>  <!-- Změněno na avg_value -->
+                <field name="KGJ1" avg="avg"  string="KGJ1 aktuální (kW)"/>
+                <field name="KGJ2" avg="avg"  string="KGJ2 aktuální (kW)"/>
+                <field name="vKGJ1"  string="KGJ1 výroba (kWH)"/>
+                <field name="sKGJ1"  string="KGJ1 spotřeba (kWH)"/>
+                <field name="STrafo" string="Spotřeba Hlavní Trafo (kWH)"/>
+                <field name="dTrafa" string="Dodávka Hlavní Trafo (kWH)"/>
+                <field name="BTC" string="BTC spotřeba (kWH)"/>
+                <field name="sSusarna" string="Spotřeba Susárna (kWH)"/>
+                <field name="sOstatni" string="Spotřeba Ostatní (kWH)"/>
+                <field name="CH4" string="CH4 (%)"/>
+                <field name="O2" string="O2 (%)"/>
+                <field name="H2S" string="H2S (ppm)"/>
+                <field name="plynAnal" string="Plyn Analýza (m3)"/>
+                <field name="hladinaPlynu" string="Hladina Plynu (%)"/>
+                <field name="tlakPlynu" string="Tlak Plynu (bar)"/>
                 <field name="timestamp"/>
             </tree>
         </field>
     </record>
 
     <!-- Pivot view for aggregated data with hourly, daily, weekly, and monthly intervals -->
-    <record id="view_power_plant_aggregated_pivot" model="ir.ui.view">
-        <field name="name">power.plant.aggregated.data.pivot</field>
-        <field name="model">power.plant.aggregated.data</field>
+    <record id="view_power_plant_aggregated2_pivot" model="ir.ui.view">
+        <field name="name">power.plant.aggregated.data2.pivot</field>
+        <field name="model">power.plant.aggregated.data2</field>
         <field name="arch" type="xml">
-            <pivot string="Aggregated Power Plant Data">
+            <pivot string="Aggregated Power Plant Data2">
                <!-- Grouping by timestamp to allow pivot by time -->
                 <field name="timestamp" type="row" interval="hour"/> <!-- Group by hour -->
                 <field name="name" type="col"/>
                 <!-- Use the computed average field for values -->
-                <field name="avg_value" type="measure" operator="avg" string="Avg Power"/>            </pivot>
+                <field name="KGJ1" type="measure" operator="avg" string="KGJ1 Avg Power"/>
+                <field name="KGJ2" type="measure" operator="avg" string="KGJ2 Avg Power"/>
+                </pivot>
         </field>
     </record>
 
     <!-- Graph view for aggregated data -->
-    <record id="view_power_plant_aggregated_graph" model="ir.ui.view">
-        <field name="name">power.plant.aggregated.data.graph</field>
-        <field name="model">power.plant.aggregated.data</field>
+    <record id="view_power_plant_aggregated2_graph" model="ir.ui.view">
+        <field name="name">power.plant.aggregated.data2.graph</field>
+        <field name="model">power.plant.aggregated.data2</field>
         <field name="arch" type="xml">
-            <graph string="Aggregated Power Plant Data" type="bar">
+            <graph string="Aggregated Power Plant Data2" type="bar">
             <field name="timestamp" type="row" interval="day" string="Time"/> <!-- Rozlišení podle času -->
             <field name="name" type="col" string="Generator"/> <!-- Název generátoru pro odlišení -->
-            <field name="avg_value" type="measure" operator="avg" string="Avg Power"/> <!-- Průměrná hodnota na ose x -->
+            <field name="KGJ1" type="measure" operator="avg" string="KGJ1 Avg Power"/> <!-- Průměrná hodnota na ose x -->
+            <field name="KGJ2" type="measure" operator="avg" string="KGJ2 Avg Power"/> <!-- Průměrná hodnota na ose x -->
            </graph>
         </field>
     </record>
 
     <!-- Action to open tree, graph, and pivot views -->
-    <record id="action_power_plant_aggregated_data" model="ir.actions.act_window">
-        <field name="name">Power Plant Aggregated Data</field>
-        <field name="res_model">power.plant.aggregated.data</field>
+    <record id="action_power_plant_aggregated_data2" model="ir.actions.act_window">
+        <field name="name">Power Plant Aggregated Data2</field>
+        <field name="res_model">power.plant.aggregated.data2</field>
         <field name="view_mode">tree,graph,pivot</field>
     </record>
 
 
     <!-- Search view with custom filter for the last hour -->
     <record id="power_plant_aggregated_data_search" model="ir.ui.view">
-        <field name="name">power.plant.aggregated.data.search</field>
-        <field name="model">power.plant.aggregated.data</field>
+        <field name="name">power.plant.aggregated.data2.search</field>
+        <field name="model">power.plant.aggregated.data2</field>
         <field name="arch" type="xml">
-            <search string="Search Power Plant Aggregated Data">
+            <search string="Search Power Plant Aggregated Data2">
                 <field name="name"/>
                 <field name="timestamp"/>
                 <filter string="Dnešní data" name="today"
@@ -74,23 +91,20 @@
 
                 <separator/>
 
-                <!-- Filtr pro Generator 1 -->
-                <filter string="Generator 1" name="generator1"
-                    domain="[('name', '=', 'generator1')]"/>
-
-                <!-- Filtr pro Generator 2 -->
-                <filter string="Generator 2" name="generator2"
-                    domain="[('name', '=', 'generator2')]"/>
-
                 <!-- Group by name (seskupení podle názvu generátoru) -->
                 <group expand="0" string="Group By">
-                    <filter string="Generátor" name="group_by_generator"
-                        context="{'group_by': 'name'}"/>
                     <filter string="Den, měsíc,rok" name="group_by_day"
                         context="{'group_by': 'timestamp:hour'}"/>
                 </group>
             </search>
         </field>
+    </record>
+
+    <record id="action_aggregate_historical_data2" model="ir.actions.server">
+        <field name="name">Spustit Agregaci Dat2</field>
+        <field name="model_id" ref="model_power_plant_data2"/>
+        <field name="state">code</field>
+        <field name="code">model.action_aggregate_historical_data2()</field>
     </record>
 
 </odoo>

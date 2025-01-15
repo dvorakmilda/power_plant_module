@@ -8,6 +8,35 @@
     </record>
 
     <!-- Tree view (zobrazení hodnoty a průměru) -->
+    <record id="view_power_plant2_tree" model="ir.ui.view">
+        <field name="name">power.plant.data2.tree</field>
+        <field name="model">power.plant.data2</field>
+        <field name="arch" type="xml">
+            <tree string="Power Plant Data2">
+                <field name="name"/>
+                <field name="KGJ1" avg="avg"  string="KGJ1 aktuální (kW)"/>
+                <field name="KGJ2" avg="avg"  string="KGJ2 aktuální (kW)"/>
+                <field name="vKGJ1"  string="KGJ1 výroba (kWH)"/>
+                <field name="sKGJ1"  string="KGJ1 spotřeba (kWH)"/>
+                <field name="STrafo" string="Spotřeba Hlavní Trafo (kWH)"/>
+                <field name="dTrafa" string="Dodávka Hlavní Trafo (kWH)"/>
+                <field name="BTC" string="BTC spotřeba (kWH)"/>
+                <field name="sSusarna" string="Spotřeba Susárna (kWH)"/>
+                <field name="sOstatni" string="Spotřeba Ostatní (kWH)"/>
+                <field name="CH4" string="CH4 (%)"/>
+                <field name="O2" string="O2 (%)"/>
+                <field name="H2S" string="H2S (ppm)"/>
+                <field name="plynAnal" string="Plyn Analýza (m3)"/>
+                <field name="hladinaPlynu" string="Hladina Plynu (%)"/>
+                <field name="tlakPlynu" string="Tlak Plynu (bar)"/>
+                <field name="timestamp"/>
+                <field name="is_real_data"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <!-- Tree view (zobrazení hodnoty a průměru) -->
     <record id="view_power_plant_tree" model="ir.ui.view">
         <field name="name">power.plant.data.tree</field>
         <field name="model">power.plant.data</field>
@@ -98,6 +127,16 @@
         <field name="context">{}</field>
         <field name="domain">[]</field>
     </record>
+
+    <!-- Action to open tree and graph views -->
+    <record id="action_power_plant_data2" model="ir.actions.act_window">
+        <field name="name">Power Plant Data 2</field>
+        <field name="res_model">power.plant.data2</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{}</field>
+        <field name="domain">[]</field>
+    </record>
+
 
     <record id="action_aggregate_historical_data" model="ir.actions.server">
         <field name="name">Spustit Agregaci Dat</field>

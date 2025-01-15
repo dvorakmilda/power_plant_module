@@ -9,6 +9,15 @@
             <field name="interval_number">1</field>
             <field name="numbercall">-1</field>
         </record>
+
+            <record id="ir_cron_aggregate_hourly_data2" model="ir.cron">
+            <field name="name">Aggregate Hourly Power Plant Data2</field>
+            <field name="model_id" ref="model_power_plant_data2"/>
+            <field name="state">code</field>
+            <field name="code">model.aggregate_hourly_data()</field>
+            <field name="interval_type">hours</field>
+            <field name="interval_number">1</field>
+            <field name="numbercall">-1</field>
+        </record>
     </data>
 </odoo>
-

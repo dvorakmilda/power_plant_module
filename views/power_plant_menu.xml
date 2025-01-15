@@ -1,7 +1,10 @@
 <odoo>
     <menuitem id="menu_power_plant_root" name="Power Plant" sequence="10"/>
     <menuitem id="menu_power_plant_data" name="Power Plant Data" parent="menu_power_plant_root" action="action_power_plant_data"/>
+    <menuitem id="menu_power_plant_data2" name="Power Plant Data2" parent="menu_power_plant_root" action="action_power_plant_data2"/>
     <!--menuitem id="menu_power_plant_report" name="Power Plant Report" parent="menu_power_plant_root" action="action_power_plant_custom_report"/-->
     <menuitem id="menu_power_plant_aggregated" name="Aggregated Power Data" parent="menu_power_plant_root" action="action_power_plant_aggregated_data"/>
     <menuitem id="menu_power_plant_data_aggregate" name="Spustit Agregaci Dat" parent="menu_power_plant_root" action="action_aggregate_historical_data"/>
+    <menuitem id="menu_power_plant_aggregated2" name="Aggregated Power Data2" parent="menu_power_plant_root" action="action_power_plant_aggregated_data2"/>
+    <menuitem id="menu_power_plant_data2_aggregate" name="Spustit Agregaci Dat2" parent="menu_power_plant_root" action="action_aggregate_historical_data2"/>
 </odoo>

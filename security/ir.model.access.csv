@@ -3,3 +3,7 @@ access_power_plant_data_user,power.plant.data.user,model_power_plant_data,,1,0,0
 access_power_plant_data_manager,power.plant.data.manager,model_power_plant_data,,1,1,1,1
 access_power_plant_aggregated_data_user,power.plant.aggregated.data.user,model_power_plant_aggregated_data,,1,0,0,0
 access_power_plant_aggregated_data_manager,power.plant.aggregated.data.manager,model_power_plant_aggregated_data,,1,1,1,1
+access_power_plant_data2_user,power.plant.data2.user,model_power_plant_data2,,1,0,0,0
+access_power_plant_data2_manager,power.plant.data2.manager,model_power_plant_data2,,1,1,1,1
+access_power_plant_aggregated_data2_user,power.plant.aggregated.data2.user,model_power_plant_aggregated_data2,,1,0,0,0
+access_power_plant_aggregated_data2_manager,power.plant.aggregated.data2.manager,model_power_plant_aggregated_data2,,1,1,1,1
