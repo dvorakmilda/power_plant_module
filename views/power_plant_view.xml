@@ -29,6 +29,11 @@
                 <field name="plynAnal" string="Plyn Analýza (m3)"/>
                 <field name="hladinaPlynu" string="Hladina Plynu (%)"/>
                 <field name="tlakPlynu" string="Tlak Plynu (bar)"/>
+                <field name="ELM11" string="ELM11 Error"/>
+                <field name="ELM13" string="ELM13 Error"/>
+                <field name="ELM14" string="ELM14 Error"/>
+                <field name="ELM15" string="ELM15 Error"/>
+                <field name="ELM16" string="ELM16 Error"/>
                 <field name="timestamp"/>
                 <field name="is_real_data"/>
             </tree>

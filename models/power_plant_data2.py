@@ -24,6 +24,11 @@ class PowerPlantData2(models.Model):
     tlakPlynu = fields.Float(string="tlakPlynu (bar)")
     timestamp = fields.Datetime(string="Timestamp", default=fields.Datetime.now)
     is_real_data = fields.Boolean(string="Is Real Data", default=True)
+    ELM11 = fields.Integer(string="ELM11 Error")
+    ELM13 = fields.Integer(string="ELM13 Error")
+    ELM14 = fields.Integer(string="ELM14 Error")
+    ELM15 = fields.Integer(string="ELM15 Error")
+    ELM16 = fields.Integer(string="ELM16 Error")
 
     @api.model
     def aggregate_hourly_data(self):
@@ -51,6 +56,11 @@ class PowerPlantData2(models.Model):
             sSusarna = max(record.sSusarna for record in records)
             sOstatni = max(record.sOstatni for record in records)
 
+            ELM11 = max(record.ELM11 for record in records)
+            ELM13 = max(record.ELM13 for record in records)
+            ELM14 = max(record.ELM14 for record in records)
+            ELM15 = max(record.ELM15 for record in records)
+            ELM16 = max(record.ELM16 for record in records)
 
             CH4 = sum(record.CH4 for record in records) / len(records)
             O2 = sum(record.O2 for record in records) / len(records)
@@ -80,6 +90,12 @@ class PowerPlantData2(models.Model):
                 'hladinaPlynu': hladinaPlynu,
                 'tlakPlynu': tlakPlynu,
                 'timestamp': current_time,
+                'ELM11': ELM11,
+                'ELM13': ELM13,
+                'ELM14': ELM14,
+                'ELM15': ELM15,
+                'ELM16': ELM16,
+
                 #'period_type': 'hour'
             })
             records.unlink()
@@ -105,6 +121,11 @@ class PowerPlantData2(models.Model):
                 AVG(plynAnal) as plynAnal,
                 AVG(hladinaPlynu) as hladinaPlynu,
                 AVG(tlakPlynu) as tlakPlynu,
+                MAX(ELM11) as ELM11,
+                MAX(ELM13) as ELM13,
+                MAX(ELM14) as ELM14,
+                MAX(ELM15) as ELM15,
+                MAX(ELM16) as ELM16,
                 date_trunc('hour', timestamp) as timestamp
             FROM
                 power_plant_data2
@@ -150,6 +171,12 @@ class PowerPlantData2(models.Model):
                     sSusarna = max(rec.sSusarna for rec in records)
                     sOstatni = max(rec.sOstatni for rec in records)
 
+                    ELM11 = max(record.ELM11 for record in records)
+                    ELM13 = max(record.ELM13 for record in records)
+                    ELM14 = max(record.ELM14 for record in records)
+                    ELM15 = max(record.ELM15 for record in records)
+                    ELM16 = max(record.ELM16 for record in records)
+
                     CH4 = sum(rec.CH4 for rec in records) / len(records)
                     O2 = sum(rec.O2 for rec in records) / len(records)
                     H2S = sum(rec.H2S for rec in records) / len(records)
@@ -176,6 +203,12 @@ class PowerPlantData2(models.Model):
                         'hladinaPlynu': hladinaPlynu,
                         'tlakPlynu': tlakPlynu,
                         'timestamp': start_time,
+                        'ELM11': ELM11,
+                        'ELM13': ELM13,
+                        'ELM14': ELM14,
+                        'ELM15': ELM15,
+                        'ELM16': ELM16,
+
                     })
 
                     # Odstranění původních záznamů

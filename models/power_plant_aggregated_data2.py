@@ -23,5 +23,10 @@ class PowerPlantAggregatedData2(models.Model):
     hladinaPlynu = fields.Float(string="hladinaPlynu (%)")
     tlakPlynu = fields.Float(string="tlakPlynu (bar)")
     timestamp = fields.Datetime(string="Timestamp", default=fields.Datetime.now)
+    ELM11 = fields.Integer(string="ELM11 Error")
+    ELM13 = fields.Integer(string="ELM13 Error")
+    ELM14 = fields.Integer(string="ELM14 Error")
+    ELM15 = fields.Integer(string="ELM15 Error")
+    ELM16 = fields.Integer(string="ELM16 Error")
 
 

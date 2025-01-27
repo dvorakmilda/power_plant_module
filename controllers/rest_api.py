@@ -47,6 +47,11 @@ class PowerPlantAPI(http.Controller):
                 'plynAnal': row["plynAnal"],  # Uložíme hodnotu průtoku plynu za hodinu v m3
                 'hladinaPlynu': row["hladinaPlynu"],  # Uložíme hodnotu hladiny plynu v % v plynojemu
                 'tlakPlynu': row["tlakPlynu"],  # Uložíme hodnotu tlaku plynu v bar
+                'ELM11':row["ELM11"],
+                'ELM13':row["ELM13"],
+                'ELM14':row["ELM14"],
+                'ELM15':row["ELM15"],
+                'ELM16':row["ELM16"],
                 'timestamp': current_time,
                 'is_real_data': True  # Označení jako skutečná data
             })

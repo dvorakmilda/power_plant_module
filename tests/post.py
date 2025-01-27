@@ -30,6 +30,12 @@ def generate_data():
         "plynAnal": 124.4000015258789,
         "hladinaPlynu": 98.26815032958984,
         "tlakPlynu": -0.9069366455078125,
+        "ELM11":0,
+        "ELM13":0,
+        "ELM14":0,
+        "ELM15":0,
+        "ELM16":0,
+
     }
 
 # Smyčka pro odesílání POST požadavků každou vteřinu
