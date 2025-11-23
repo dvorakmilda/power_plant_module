@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
 from odoo import models, fields, api
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class PowerPlantData2(models.Model):
     _name = 'power.plant.data2'
@@ -107,46 +110,57 @@ class PowerPlantData2(models.Model):
 
             # Odstranění starých agregovaných dat pro tento generátor a časové období
 
-            # Uložení nových agregovaných dat
-            self.env['power.plant.aggregated.data2'].create({
-                'name': current_time.replace(minute=0, second=0, microsecond=0),
-                'KGJ1': KGJ1,
-                'KGJ2': KGJ2,
-                'sKGJ1': sKGJ1,
-                'vKGJ1': vKGJ1,
-                'BTC': BTC,
-                'STrafo': STrafo,
-                'dTrafa': dTrafa,
-                'sSusarna': sSusarna,
-                'sOstatni': sOstatni,
-                'CH4': CH4,
-                'O2': O2,
-                'H2S': H2S,
-                'plynAnal': plynAnal,
-                'hladinaPlynu': hladinaPlynu,
-                'tlakPlynu': tlakPlynu,
-                'timestamp': current_time,
-                'ELM11': ELM11,
-                'ELM13': ELM13,
-                'ELM14': ELM14,
-                'ELM15': ELM15,
-                'ELM16': ELM16,
-                'LSB1': LSB1,
-                'PCA100': PCA100,
-                'PCA101': PCA101,
-                'PCA102': PCA102,
-                'FIQ500aktual': FIQ500aktual,
-                'FIQ500celkem': FIQ500celkem,
-                'M01': M01,
-                'M02': M02,
-                'M21otevreno': M21otevreno,
-                'M21zavreno': M21zavreno,
-                'M22otevreno': M22otevreno,
-                'M22zavreno': M22zavreno,
+            # Uložení nových agregovaných dat s kontrolou úspěšnosti
+            try:
+                aggregated_record = self.env['power.plant.aggregated.data2'].create({
+                    'name': current_time.replace(minute=0, second=0, microsecond=0),
+                    'KGJ1': KGJ1,
+                    'KGJ2': KGJ2,
+                    'sKGJ1': sKGJ1,
+                    'vKGJ1': vKGJ1,
+                    'BTC': BTC,
+                    'STrafo': STrafo,
+                    'dTrafa': dTrafa,
+                    'sSusarna': sSusarna,
+                    'sOstatni': sOstatni,
+                    'CH4': CH4,
+                    'O2': O2,
+                    'H2S': H2S,
+                    'plynAnal': plynAnal,
+                    'hladinaPlynu': hladinaPlynu,
+                    'tlakPlynu': tlakPlynu,
+                    'timestamp': current_time,
+                    'ELM11': ELM11,
+                    'ELM13': ELM13,
+                    'ELM14': ELM14,
+                    'ELM15': ELM15,
+                    'ELM16': ELM16,
+                    'LSB1': LSB1,
+                    'PCA100': PCA100,
+                    'PCA101': PCA101,
+                    'PCA102': PCA102,
+                    'FIQ500aktual': FIQ500aktual,
+                    'FIQ500celkem': FIQ500celkem,
+                    'M01': M01,
+                    'M02': M02,
+                    'M21otevreno': M21otevreno,
+                    'M21zavreno': M21zavreno,
+                    'M22otevreno': M22otevreno,
+                    'M22zavreno': M22zavreno,
 
-                #'period_type': 'hour'
-            })
-            records.unlink()
+                    #'period_type': 'hour'
+                })
+                
+                # Pouze pokud se agregovaný záznam úspěšně vytvořil, smažeme zdrojová data
+                if aggregated_record and aggregated_record.id:
+                    records.unlink()
+                    _logger.info(f'Agregace úspěšná: {len(records)} záznamů agregováno a smazáno')
+                else:
+                    _logger.warning('Agregovaný záznam nebyl vytvořen, zdrojová data nebyla smazána')
+                    
+            except Exception as e:
+                _logger.error(f'Chyba při agregaci dat: {str(e)}. Zdrojová data nebyla smazána.')
+                # Zdrojová data zůstávají zachována pro další pokus
 
     @api.model
     def get_grouped_avg_data(self):
@@ -250,47 +264,55 @@ class PowerPlantData2(models.Model):
                     M22otevreno = any(rec.M22otevreno for rec in records)
                     M22zavreno = any(rec.M22zavreno for rec in records)
 
-                    # Uložení agregovaných dat do nové tabulky
-                    self.env['power.plant.aggregated.data2'].create({
-                        'name': end_time,
-                        'KGJ1': KGJ1,
-                        'KGJ2': KGJ2,
-                        'sKGJ1': sKGJ1,
-                        'vKGJ1': vKGJ1,
-                        'BTC': BTC,
-                        'STrafo': STrafo,
-                        'dTrafa': dTrafa,
-                        'sSusarna': sSusarna,
-                        'sOstatni': sOstatni,
-                        'CH4': CH4,
-                        'O2': O2,
-                        'H2S': H2S,
-                        'plynAnal': plynAnal,
-                        'hladinaPlynu': hladinaPlynu,
-                        'tlakPlynu': tlakPlynu,
-                        'timestamp': start_time,
-                        'ELM11': ELM11,
-                        'LSB1': LSB1,
-                        'PCA100': PCA100,
-                        'PCA101': PCA101,
-                        'PCA102': PCA102,
-                        'FIQ500aktual': FIQ500aktual,
-                        'FIQ500celkem': FIQ500celkem,
-                        'M01': M01,
-                        'M02': M02,
-                        'M21otevreno': M21otevreno,
-                        'M21zavreno': M21zavreno,
-                        'M22otevreno': M22otevreno,
-                        'M22zavreno': M22zavreno,
-                        'ELM13': ELM13,
-                        'ELM14': ELM14,
-                        'ELM15': ELM15,
-                        'ELM16': ELM16,
+                    # Uložení agregovaných dat do nové tabulky s kontrolou úspěšnosti
+                    try:
+                        aggregated_record = self.env['power.plant.aggregated.data2'].create({
+                            'name': end_time,
+                            'KGJ1': KGJ1,
+                            'KGJ2': KGJ2,
+                            'sKGJ1': sKGJ1,
+                            'vKGJ1': vKGJ1,
+                            'BTC': BTC,
+                            'STrafo': STrafo,
+                            'dTrafa': dTrafa,
+                            'sSusarna': sSusarna,
+                            'sOstatni': sOstatni,
+                            'ELM11': ELM11,
+                            'ELM13': ELM13,
+                            'ELM14': ELM14,
+                            'ELM15': ELM15,
+                            'ELM16': ELM16,
+                            'CH4': CH4,
+                            'O2': O2,
+                            'H2S': H2S,
+                            'plynAnal': plynAnal,
+                            'hladinaPlynu': hladinaPlynu,
+                            'tlakPlynu': tlakPlynu,
+                            'timestamp': start_time,
+                            'LSB1': LSB1,
+                            'PCA100': PCA100,
+                            'PCA101': PCA101,
+                            'PCA102': PCA102,
+                            'FIQ500aktual': FIQ500aktual,
+                            'FIQ500celkem': FIQ500celkem,
+                            'M01': M01,
+                            'M02': M02,
+                            'M21otevreno': M21otevreno,
+                            'M21zavreno': M21zavreno,
+                            'M22otevreno': M22otevreno,
+                            'M22zavreno': M22zavreno
 
-                    })
+                        })
 
-                    # Odstranění původních záznamů
-                    records.unlink()
+                        # Pouze pokud se agregovaný záznam úspěšně vytvořil, smažeme zdrojová data
+                        if aggregated_record and aggregated_record.id:
+                            records.unlink()
+                        else:
+                            _logger.warning(f'Agregovaný záznam pro období {start_time} - {end_time} nebyl vytvořen, zdrojová data nebyla smazána')
+                            
+                    except Exception as e:
+                        _logger.error(f'Chyba při historické agregaci dat pro období {start_time} - {end_time}: {str(e)}. Zdrojová data nebyla smazána.')
+                        # Pokračovat s dalším časovým úsekem místo ukončení celého procesu
 
                 # Posun na další hodinový interval
                 start_time = end_time

@@ -2,19 +2,26 @@ from odoo import http
 from odoo.http import request
 from datetime import datetime
 import json
+import pytz
 
 class PowerPlantAPI(http.Controller):
     @http.route('/api/power_plant_data', type='json', auth='public', methods=['POST'], csrf=False)
     def receive_data(self, **post):
         data = request.httprequest.get_json()  # Čtení JSON požadavku
-        current_time = datetime.now()
+        
+        # Získání aktuálního času v českém časovém pásmu
+        czech_tz = pytz.timezone('Europe/Prague')
+        czech_time = datetime.now(czech_tz)
+        
+        # Převod na UTC pro uložení do databáze
+        utc_time = czech_time.astimezone(pytz.utc).replace(tzinfo=None)
 
         # Iterace přes každý generátor a jeho hodnotu
         for generator_id, value in data.items():
             request.env['power.plant.data'].sudo().create({
                 'name': f'generator{generator_id}',  # Vytváříme dynamický název generátoru
                 'value': value,  # Uložíme hodnotu výkonu
-                'timestamp': current_time,
+                'timestamp': utc_time,  # Ukládáme UTC čas (bez timezone info)
                 'is_real_data': True  # Označení jako skutečná data
             })
 
@@ -24,14 +31,20 @@ class PowerPlantAPI(http.Controller):
     def receive_data2(self, **post):
         try:
             data = request.httprequest.get_json()
-            current_time = datetime.now()
+            # Získání aktuálního času v českém časovém pásmu
+            czech_tz = pytz.timezone('Europe/Prague')
+            czech_time = datetime.now(czech_tz)
+            
+            # Převod na UTC pro uložení do databáze (Odoo ukládá vše v UTC)
+            utc_time = czech_time.astimezone(pytz.utc).replace(tzinfo=None)
+            
             values = []
             if isinstance(data, dict):
                 data = [data]
 
             for row in data:
                 values.append({
-                'name': f'BPS {current_time}',  # Vytváříme dynamický název generátoru
+                'name': f'BPS {czech_time.strftime("%Y-%m-%d %H:%M:%S")}',  # Vytváříme dynamický název s českým časem
                 'KGJ1': row.get("1", 0),  # Uložíme hodnotu aktuálního výkonu KG1
                 'KGJ2': row.get("2", 0),  # Uložíme hodnotu aktuálního výkonu KG2
                 'BTC': row.get("btc", 0),  # Uložíme hodnotu spotřeby BTC v KWh
@@ -67,7 +80,7 @@ class PowerPlantAPI(http.Controller):
                 'M21zavreno': row.get("M21zavreno", False),
                 'M22otevreno': row.get("M22otevreno", False),
                 'M22zavreno': row.get("M22zavreno", False),
-                'timestamp': current_time,
+                'timestamp': utc_time,  # Ukládáme UTC čas
                 'is_real_data': True  # Označení jako skutečná data
             })
             request.env['power.plant.data2'].sudo().create(values)
