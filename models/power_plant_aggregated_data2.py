@@ -28,5 +28,25 @@ class PowerPlantAggregatedData2(models.Model):
     ELM14 = fields.Integer(string="ELM14 Error")
     ELM15 = fields.Integer(string="ELM15 Error")
     ELM16 = fields.Integer(string="ELM16 Error")
+    
+    # Registr 74
+    LSB1 = fields.Float(string="LSB1")
+    
+    # Registr 76
+    PCA100 = fields.Float(string="PCA100")
+    PCA101 = fields.Float(string="PCA101")
+    PCA102 = fields.Float(string="PCA102")
+    FIQ500aktual = fields.Float(string="FIQ500 aktuální")
+    FIQ500celkem = fields.Float(string="FIQ500 celkem")
+    
+    # Registr 86
+    M01 = fields.Boolean(string="M01")
+    M02 = fields.Boolean(string="M02")
+    M21otevreno = fields.Boolean(string="M21 otevřeno")
+    M21zavreno = fields.Boolean(string="M21 zavřeno")
+    M22otevreno = fields.Boolean(string="M22 otevřeno")
+    M22zavreno = fields.Boolean(string="M22 zavřeno")
+
+
 
 

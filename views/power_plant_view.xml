@@ -34,6 +34,18 @@
                 <field name="ELM14" string="ELM14 Error"/>
                 <field name="ELM15" string="ELM15 Error"/>
                 <field name="ELM16" string="ELM16 Error"/>
+                <field name="LSB1" string="LSB1"/>
+                <field name="PCA100" string="PCA100"/>
+                <field name="PCA101" string="PCA101"/>
+                <field name="PCA102" string="PCA102"/>
+                <field name="FIQ500aktual" string="FIQ500 aktuální"/>
+                <field name="FIQ500celkem" string="FIQ500 celkem"/>
+                <field name="M01" string="M01"/>
+                <field name="M02" string="M02"/>
+                <field name="M21otevreno" string="M21 otevřeno"/>
+                <field name="M21zavreno" string="M21 zavřeno"/>
+                <field name="M22otevreno" string="M22 otevřeno"/>
+                <field name="M22zavreno" string="M22 zavřeno"/>
                 <field name="timestamp"/>
                 <field name="is_real_data"/>
             </tree>

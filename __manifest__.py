@@ -1,6 +1,6 @@
 {
     'name': 'Power Plant Data Module',
-    'version': '1.0',
+    'version': '1.2',
     'category': 'Energy',
     'summary': 'Module to store and visualize power plant data',
     'description': 'This module creates a data structure to store power plant data, provides a REST API for data input, and displays data using tree and graph views. It also includes a cron job to check for missing records every minute.',

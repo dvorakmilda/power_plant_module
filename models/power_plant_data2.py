@@ -29,6 +29,24 @@ class PowerPlantData2(models.Model):
     ELM14 = fields.Integer(string="ELM14 Error")
     ELM15 = fields.Integer(string="ELM15 Error")
     ELM16 = fields.Integer(string="ELM16 Error")
+    
+    # Registr 74
+    LSB1 = fields.Float(string="LSB1")
+    
+    # Registr 76
+    PCA100 = fields.Float(string="PCA100")
+    PCA101 = fields.Float(string="PCA101")
+    PCA102 = fields.Float(string="PCA102")
+    FIQ500aktual = fields.Float(string="FIQ500 aktuální")
+    FIQ500celkem = fields.Float(string="FIQ500 celkem")
+    
+    # Registr 86
+    M01 = fields.Boolean(string="M01")
+    M02 = fields.Boolean(string="M02")
+    M21otevreno = fields.Boolean(string="M21 otevřeno")
+    M21zavreno = fields.Boolean(string="M21 zavřeno")
+    M22otevreno = fields.Boolean(string="M22 otevřeno")
+    M22zavreno = fields.Boolean(string="M22 zavřeno")
 
     @api.model
     def aggregate_hourly_data(self):
@@ -68,6 +86,24 @@ class PowerPlantData2(models.Model):
             plynAnal = sum(record.plynAnal for record in records) / len(records)
             hladinaPlynu = sum(record.hladinaPlynu for record in records) / len(records)
             tlakPlynu = sum(record.tlakPlynu for record in records) / len(records)
+            
+            # Nová pole - registr 74
+            LSB1 = sum(record.LSB1 for record in records) / len(records)
+            
+            # Nová pole - registr 76
+            PCA100 = sum(record.PCA100 for record in records) / len(records)
+            PCA101 = sum(record.PCA101 for record in records) / len(records)
+            PCA102 = sum(record.PCA102 for record in records) / len(records)
+            FIQ500aktual = sum(record.FIQ500aktual for record in records) / len(records)
+            FIQ500celkem = max(record.FIQ500celkem for record in records)
+            
+            # Nová pole - registr 86 (boolean - vezmeme poslední hodnotu nebo nejčastější)
+            M01 = any(record.M01 for record in records)
+            M02 = any(record.M02 for record in records)
+            M21otevreno = any(record.M21otevreno for record in records)
+            M21zavreno = any(record.M21zavreno for record in records)
+            M22otevreno = any(record.M22otevreno for record in records)
+            M22zavreno = any(record.M22zavreno for record in records)
 
             # Odstranění starých agregovaných dat pro tento generátor a časové období
 
@@ -95,6 +131,18 @@ class PowerPlantData2(models.Model):
                 'ELM14': ELM14,
                 'ELM15': ELM15,
                 'ELM16': ELM16,
+                'LSB1': LSB1,
+                'PCA100': PCA100,
+                'PCA101': PCA101,
+                'PCA102': PCA102,
+                'FIQ500aktual': FIQ500aktual,
+                'FIQ500celkem': FIQ500celkem,
+                'M01': M01,
+                'M02': M02,
+                'M21otevreno': M21otevreno,
+                'M21zavreno': M21zavreno,
+                'M22otevreno': M22otevreno,
+                'M22zavreno': M22zavreno,
 
                 #'period_type': 'hour'
             })
@@ -183,6 +231,24 @@ class PowerPlantData2(models.Model):
                     plynAnal = sum(rec.plynAnal for rec in records) / len(records)
                     hladinaPlynu = sum(rec.hladinaPlynu for rec in records) / len(records)
                     tlakPlynu = sum(rec.tlakPlynu for rec in records) / len(records)
+                    
+                    # Nová pole - registr 74
+                    LSB1 = sum(rec.LSB1 for rec in records) / len(records)
+                    
+                    # Nová pole - registr 76
+                    PCA100 = sum(rec.PCA100 for rec in records) / len(records)
+                    PCA101 = sum(rec.PCA101 for rec in records) / len(records)
+                    PCA102 = sum(rec.PCA102 for rec in records) / len(records)
+                    FIQ500aktual = sum(rec.FIQ500aktual for rec in records) / len(records)
+                    FIQ500celkem = max(rec.FIQ500celkem for rec in records)
+                    
+                    # Nová pole - registr 86
+                    M01 = any(rec.M01 for rec in records)
+                    M02 = any(rec.M02 for rec in records)
+                    M21otevreno = any(rec.M21otevreno for rec in records)
+                    M21zavreno = any(rec.M21zavreno for rec in records)
+                    M22otevreno = any(rec.M22otevreno for rec in records)
+                    M22zavreno = any(rec.M22zavreno for rec in records)
 
                     # Uložení agregovaných dat do nové tabulky
                     self.env['power.plant.aggregated.data2'].create({
@@ -204,6 +270,18 @@ class PowerPlantData2(models.Model):
                         'tlakPlynu': tlakPlynu,
                         'timestamp': start_time,
                         'ELM11': ELM11,
+                        'LSB1': LSB1,
+                        'PCA100': PCA100,
+                        'PCA101': PCA101,
+                        'PCA102': PCA102,
+                        'FIQ500aktual': FIQ500aktual,
+                        'FIQ500celkem': FIQ500celkem,
+                        'M01': M01,
+                        'M02': M02,
+                        'M21otevreno': M21otevreno,
+                        'M21zavreno': M21zavreno,
+                        'M22otevreno': M22otevreno,
+                        'M22zavreno': M22zavreno,
                         'ELM13': ELM13,
                         'ELM14': ELM14,
                         'ELM15': ELM15,

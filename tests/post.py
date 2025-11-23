@@ -4,7 +4,7 @@ import random
 import time
 
 # URL vašeho REST API
-url= "http://100.84.49.40:8070/api/power_plant_data2"
+url= "http://192.168.222.68:8069/api/power_plant_data2"
 #url = "https://www.multireality.cz/api/power_plant_data"
 #url = "https://posttestserver.dev/p/ixm03e9bosab4lch/post"
 # Hlavičky HTTP požadavku
@@ -35,6 +35,18 @@ def generate_data():
         "ELM14":0,
         "ELM15":0,
         "ELM16":0,
+        "LSB1": 45.2,
+        "PCA100": 10.1,
+        "PCA101": 20.2,
+        "PCA102": 30.3,
+        "FIQ500aktual": 40.4,
+        "FIQ500celkem": 50.5,
+        "M01": True,
+        "M02": False,
+        "M21otevreno": True,
+        "M21zavreno": False,
+        "M22otevreno": True,
+        "M22zavreno": False
 
     }
 

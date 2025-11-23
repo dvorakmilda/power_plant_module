@@ -32,26 +32,41 @@ class PowerPlantAPI(http.Controller):
             for row in data:
                 values.append({
                 'name': f'BPS {current_time}',  # Vytváříme dynamický název generátoru
-                'KGJ1': row["1"],  # Uložíme hodnotu aktuálního výkonu KG1
-                'KGJ2': row["2"],  # Uložíme hodnotu aktuálního výkonu KG2
-                'BTC': row["btc"],  # Uložíme hodnotu spotřeby BTC v KWh
-                'sKGJ1': row["sKGJ1"],  # Uložíme hodnotu spotřeby KGJ1 v KWh
-                'vKGJ1': row["vKGJ1"],  # Uložíme hodnotu výroby KGJ1 v KWh
-                'STrafo': row["STrafo"],  # Uložíme hodnotu spotřeby trafo v KWh
-                'dTrafa': row["dTrafa"],  # Uložíme hodnotu dodávky trafo v KWh
-                'sSusarna': row["sSusarna"],  # Uložíme hodnotu spotřeby sušárny v KWh
-                'sOstatni': row["sOstatni"],  # Uložíme hodnotu spotřeby ostatních v KWh
-                'CH4': row["CH4"],  # Uložíme hodnotu koncentrace CH4 v %
-                'O2': row["O2"],  # Uložíme hodnotu koncentrace O2 v %
-                'H2S': row["H2S"],  # Uložíme hodnotu koncentrace H2S v ppm
-                'plynAnal': row["plynAnal"],  # Uložíme hodnotu průtoku plynu za hodinu v m3
-                'hladinaPlynu': row["hladinaPlynu"],  # Uložíme hodnotu hladiny plynu v % v plynojemu
-                'tlakPlynu': row["tlakPlynu"],  # Uložíme hodnotu tlaku plynu v bar
-                'ELM11':row["ELM11"],
-                'ELM13':row["ELM13"],
-                'ELM14':row["ELM14"],
-                'ELM15':row["ELM15"],
-                'ELM16':row["ELM16"],
+                'KGJ1': row.get("1", 0),  # Uložíme hodnotu aktuálního výkonu KG1
+                'KGJ2': row.get("2", 0),  # Uložíme hodnotu aktuálního výkonu KG2
+                'BTC': row.get("btc", 0),  # Uložíme hodnotu spotřeby BTC v KWh
+                'sKGJ1': row.get("sKGJ1", 0),  # Uložíme hodnotu spotřeby KGJ1 v KWh
+                'vKGJ1': row.get("vKGJ1", 0),  # Uložíme hodnotu výroby KGJ1 v KWh
+                'STrafo': row.get("STrafo", 0),  # Uložíme hodnotu spotřeby trafo v KWh
+                'dTrafa': row.get("dTrafa", 0),  # Uložíme hodnotu dodávky trafo v KWh
+                'sSusarna': row.get("sSusarna", 0),  # Uložíme hodnotu spotřeby sušárny v KWh
+                'sOstatni': row.get("sOstatni", 0),  # Uložíme hodnotu spotřeby ostatních v KWh
+                'CH4': row.get("CH4", 0),  # Uložíme hodnotu koncentrace CH4 v %
+                'O2': row.get("O2", 0),  # Uložíme hodnotu koncentrace O2 v %
+                'H2S': row.get("H2S", 0),  # Uložíme hodnotu koncentrace H2S v ppm
+                'plynAnal': row.get("plynAnal", 0),  # Uložíme hodnotu průtoku plynu za hodinu v m3
+                'hladinaPlynu': row.get("hladinaPlynu", 0),  # Uložíme hodnotu hladiny plynu v % v plynojemu
+                'tlakPlynu': row.get("tlakPlynu", 0),  # Uložíme hodnotu tlaku plynu v bar
+                'ELM11': row.get("ELM11", 0),
+                'ELM13': row.get("ELM13", 0),
+                'ELM14': row.get("ELM14", 0),
+                'ELM15': row.get("ELM15", 0),
+                'ELM16': row.get("ELM16", 0),
+                # Registr 74
+                'LSB1': row.get("LSB1", 0),
+                # Registr 76
+                'PCA100': row.get("PCA100", 0),
+                'PCA101': row.get("PCA101", 0),
+                'PCA102': row.get("PCA102", 0),
+                'FIQ500aktual': row.get("FIQ500aktual", 0),
+                'FIQ500celkem': row.get("FIQ500celkem", 0),
+                # Registr 86
+                'M01': row.get("M01", False),
+                'M02': row.get("M02", False),
+                'M21otevreno': row.get("M21otevreno", False),
+                'M21zavreno': row.get("M21zavreno", False),
+                'M22otevreno': row.get("M22otevreno", False),
+                'M22zavreno': row.get("M22zavreno", False),
                 'timestamp': current_time,
                 'is_real_data': True  # Označení jako skutečná data
             })
